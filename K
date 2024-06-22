@@ -1,0 +1,55 @@
+from PIL import Image, ImageDraw, ImageFont
+
+# Create an image with split background
+width, height = 800, 1200
+background = Image.new('RGB', (width, height), (255, 255, 255))
+
+# Draw the gradient background
+draw = ImageDraw.Draw(background)
+
+for i in range(width // 2):
+    r = 255 - (i * 255 // (width // 2))
+    g = 128 + (i * 127 // (width // 2))
+    b = 128 + (i * 127 // (width // 2))
+    draw.line([(i, 0), (i, height)], fill=(r, g, b))
+
+for i in range(width // 2, width):
+    r = (i - width // 2) * 64 // (width // 2)
+    g = (i - width // 2) * 64 // (width // 2)
+    b = 128 + (i - width // 2) * 127 // (width // 2)
+    draw.line([(i, 0), (i, height)], fill=(r, g, b))
+
+# Load fonts
+title_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 100)
+subtitle_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 50)
+author_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 40)
+
+# Title and Subtitle
+title_text = "MAY 21"
+subtitle_text = "Where Love Meets Mystery"
+author_text = "By Krishna Bhatia"
+
+# Calculate text size and positions
+title_width, title_height = draw.textsize(title_text, font=title_font)
+subtitle_width, subtitle_height = draw.textsize(subtitle_text, font=subtitle_font)
+author_width, author_height = draw.textsize(author_text, font=author_font)
+
+# Draw text
+draw.text(((width - title_width) / 2, height * 0.1), title_text, font=title_font, fill="black")
+draw.text(((width - subtitle_width) / 2, height * 0.25), subtitle_text, font=subtitle_font, fill="black")
+draw.text(((width - author_width) / 2, height * 0.8), author_text, font=author_font, fill="black")
+
+# Draw central images (simplified as silhouettes for now)
+romantic_scene = Image.new('L', (width // 2, height // 2), 0)
+mystery_scene = Image.new('L', (width // 2, height // 2), 0)
+
+romantic_draw = ImageDraw.Draw(romantic_scene)
+mystery_draw = ImageDraw.Draw(mystery_scene)
+
+romantic_draw.ellipse([(50, 50), (width // 2 - 50, height // 2 - 50)], fill=255)
+mystery_draw.rectangle([(50, 50), (width // 2 - 50, height // 2 - 50)], fill=255)
+
+background.paste(romantic_scene, (width // 4 - (width // 4) // 2, height // 2 - (height // 4) // 2), romantic_scene)
+background.paste(mystery_scene, (3 * width // 4 - (width // 4) // 2, height // 2 - (height // 4) // 2), mystery_scene)
+
+background.show()
